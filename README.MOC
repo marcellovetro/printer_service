@@ -1,0 +1,16 @@
+How to install
+
+
+
+API
+localhost:port/api/v1/
+
+COMMAND			METHOD		PARAMS EXAMPLE		RESPONSE EXAMPLE
+getprinters		GET			NONE				{"status": 200,"data": ["OneNote","PDF24 Fax","PDF24 PDF","Microsoft XPS Document Writer","Microsoft Print to PDF","Fax"]}
+test			GET			NONE				{"status": 200,"data": ["OneNote","PDF24 Fax","PDF24 PDF","Microsoft XPS Document Writer","Microsoft Print to PDF","Fax"]}
+setprinter		POST
+							PARAMS:
+							{"printers": [{"id": 1,"name": "OneNote"},{"id": 2,"name": "i'm goging to cause a not found"}]}
+
+							RESPONSE:
+							{"status": 200,"data": [{"id": 1,"status": "Añadida"},{"id": 2,"status": "No se ha encontrado"}]}
