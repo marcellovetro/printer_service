@@ -4,6 +4,8 @@ var url = require('url');
 var ippPrinter = require('ipp');
 var printer = require('printer');
 var mime = require('mime');
+const { exec } = require('child_process');
+
 
 //reading config
 var config = getConfig();
@@ -28,6 +30,7 @@ try{
 }
 catch(e){
    //throw e;
+   console.log("WARNING: NO LANG LOADED");
 }
 
 
@@ -94,7 +97,6 @@ function getPrinterByName(name){
 		return null;
 	}
 
-	//get default system printer
 	for (var i = 0;i<printers.length;i++){
 		if (printers[i].name==name){
 			return printers[i];
@@ -118,103 +120,6 @@ function getPrinterById(id){
 }
 
 //--------------------Funcs---------------------
-
-function printFile(file,printer,cb){
-   // Read the requested file content from file system
-   fs.readFile(file, function (err, data) {
-      if (err) {
-         cb(-4);
-		   return;
-      } else {
-         print(data,mime.getType(file),printer,cb)
-      }
-   });
-}
-
-function print(buffer,mimetype,printer_id,cb){
-   //converting to correct format to print
-   if(mimetype!="application/pdf" && mimetype!="text/plain"){
-      if (mimetype==null){
-         cb(-2);
-         return;
-      }
-      else{
-         cb(-1);
-         return;
-      }
-   }
-
-   var pri = getPrinterById(printer_id);
-   if (pri==null){
-      cb(-3);
-      return;
-   }
-   console.log(pri);
-
-   /*printer.printDirect({
-      data: buffer,
-      type: 'TEXT',
-      success: function(id) {
-         console.log('printed with id ' + id);
-      },
-      error: function(err) {
-         console.error('error on printing: ' + err);
-      }
-   });*/
-   cb(0);
-   return;
-   var p = ippPrinter.Printer(config.defaultPrinter);
-   var msg = {
-      "operation-attributes-tag": {
-         "requesting-user-name": "test",
-         "job-name": "test1",
-         "document-format": mimetype
-      },
-      data: buffer
-   };
-   //imprime
-   //p.execute("Print-Job", msg, function(err, res){
-   //   if (err){
-   //      cb(-5);
-   //   }
-   //      else{
-            cb(0);
-         return;
-   //      }
-   //   console.log(res);
-   //});
-}
-
-//save the config
-function saveConfig(config){
-   try{
-      var dataSave="";
-      if (config.port!=null){
-         dataSave+="PORT="+config.port+"\r\n";
-      }
-      if (config.testMessage!=null){
-         dataSave+="TEST_MESSAGE="+config.testMessage+"\r\n";
-      }
-      if (config.defaultPrinter!=null){
-         dataSave+="DEFAULT_PRINTER="+config.defaultPrinter+"\r\n";
-      }
-      if (config.lang!=null){
-         dataSave+="LANG="+config.lang+"\r\n";
-      }
-      if (config.printers!=null){
-         for(var i = 0;i<config.printers.length;i++){
-            dataSave+="PRINTER_"+config.printers[i].id+"="+config.printers[i].name+"\r\n";
-         }
-      }
-      fs.writeFileSync(".env",dataSave);
-      return true;
-   }
-   catch(err){
-      console.log(err);
-      return false;
-   }
-}
-
 //start http listener with the url calls
 function startPrintServer(port){
    http.createServer( function (request, response) {
@@ -226,25 +131,6 @@ function startPrintServer(port){
             case "GET":
                if (command.startsWith("getprinters") || command.startsWith("test")){
                   doResponse(response, 200, getPrintersNameList());
-               }
-               else if (command.startsWith("printtest")){
-                  /*if (config.testMessage==null){
-                     config.testMessage="Hello World!";
-                  }
-                  var pf=getFirstPrinter();
-                  if (pf==null){
-                     doResponse(response,404,null);
-                  }
-                  else{
-                     print(config.testMessage,"text/plain",pf.id,function(code){
-                        if (code==0){
-                           doResponse(response,200,"OK")
-                        }
-                        else{
-                           doResponse(response,303,"Error code: "+code)
-                        }
-                     });
-                  }*/
                }
                else{
                   doResponse(response,404,null);
@@ -258,20 +144,21 @@ function startPrintServer(port){
                   });
                   request.on('end', () => {
                      var printer_id = parseInt(body);
-                     let code = setPrinter(printer_id);
-                     switch(code){
-                        case 0:
-                           doResponse(response,200,getMessage("CHANGED"));
-                           break;
-                        case -1:
-                           doResponse(response,200,getMessage("CANNOTSAVECONFIG"));
-                           break;
-                        case -2:
-                           doResponse(response,200,getMessage("IDNOTFOUND"));
-                           break;
-                        default:
-                           doResponse(response,404,null);
-                     }
+                     setPrinter(printer_id,function(code){
+                        switch(code){
+                           case 0:
+                              doResponse(response,200,getMessage("CHANGED"));
+                              break;
+                           case -1:
+                              doResponse(response,200,getMessage("CANNOTSAVECONFIG"));
+                              break;
+                           case -2:
+                              doResponse(response,200,getMessage("IDNOTFOUND"));
+                              break;
+                           default:
+                              doResponse(response,404,null);
+                        }
+                     });
                   });
                }
                else{
@@ -307,21 +194,47 @@ function doResponse(responseObj,status,content){
 }
 
 //set printer data by id or add new printer to the config
-function setPrinter(id){
+function setPrinter(id,cb){
+   
    if (config.printers==null){
-      return -2;
+      cb(-2);
+      return;
    }
    else{
-      for (var i = 0;i<config.printers.length;i++){
-         if (config.printers[i].id==id){
-            config.defaultPrinter = id;
-            if (saveConfig(config)){
-               return 0;
-            }
-            return -1;
+      var prin = getPrinterById(id);
+      if (getPrinterById(id) == null){
+         cb(-2);
+         return;
+      }
+      else{
+         if (process.platform === "win32"){
+            exec('RUNDLL32 PRINTUI.DLL,PrintUIEntry /y /n "'+prin.name+'"', (err, stdout, stderr) => {
+               if (err) {
+                  cb(-1);
+                  return;
+               }
+               else{
+                  cb(0);
+                  return;
+               }
+             });
+         }
+         else if (process.platform === "darwin"){
+            //TODO: mac default set
+         }
+         else{
+            exec('export PRINTER='+prin.name, (err, stdout, stderr) => {
+               if (err) {
+                  cb(-1);
+                  return;
+               }
+               else{
+                  cb(0);
+                  return;
+               }
+             });
          }
       }
-      return -2;
    }
 }
 
@@ -331,17 +244,9 @@ function procLine(conf, line){
       var tmp = line.substring(line.indexOf("=","PORT".length)+1);
       conf.port = tmp.trim();
    }
-   else if (line.startsWith("TEST_MESSAGE") && line.indexOf("=","TEST_MESSAGE".length)>=0){
-      var tmp = line.substring(line.indexOf("=","TEST_MESSAGE".length)+1);
-      conf.testMessage = tmp.trim();
-   }
    else if (line.startsWith("LANG") && line.indexOf("=","LANG".length)>=0){
       var tmp = line.substring(line.indexOf("=","LANG".length)+1);
       conf.lang = tmp.trim();
-   }
-   else if (line.startsWith("DEFAULT_PRINTER") && line.indexOf("=","DEFAULT_PRINTER".length)>=0){
-      var tmp = line.substring(line.indexOf("=","DEFAULT_PRINTER".length)+1);
-      conf.defaultPrinter = parseInt(tmp.trim());
    }
    else if (line.startsWith("PRINTER_") && line.indexOf("=","PRINTER_".length)>=0){
       var id = line.substring("PRINTER_".length,line.indexOf("=","PRINTER_".length)).trim();
