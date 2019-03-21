@@ -1,7 +1,7 @@
 {
 	"_type": "export",
 	"__export_format": 3,
-	"__export_date": "2019-03-21T13:46:11.062Z",
+	"__export_date": "2019-03-21T15:40:44.850Z",
 	"__export_source": "insomnia.desktop.app:v6.3.2",
 	"resources": [
 		{
@@ -44,7 +44,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1553157296864,
 			"method": "GET",
-			"modified": 1553161301233,
+			"modified": 1553182136047,
 			"name": "getprinters",
 			"parameters": [],
 			"parentId": "wrk_7d5a881f47c3413f8b37b36bcc4aa733",
@@ -61,8 +61,8 @@
 			"_id": "req_83eb85a243d84f01b7bd0b7210caa92c",
 			"authentication": {},
 			"body": {
-				"mimeType": "application/json",
-				"text": "{\n\t\"printers\": [\n\t\t{\n\t\t\t\"id\": 1,\n\t\t\t\"name\": \"OneNote\"\n\t\t},\n\t\t{\n\t\t\t\"id\": 2,\n\t\t\t\"name\": \"i'm goging to cause a not found\"\n\t\t}\n\t]\n}"
+				"mimeType": "",
+				"text": "3"
 			},
 			"created": 1553157603319,
 			"description": "",
@@ -70,7 +70,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1553157603319,
 			"method": "POST",
-			"modified": 1553172282582,
+			"modified": 1553177587813,
 			"name": "setprinter",
 			"parameters": [],
 			"parentId": "wrk_7d5a881f47c3413f8b37b36bcc4aa733",
@@ -81,29 +81,6 @@
 			"settingSendCookies": true,
 			"settingStoreCookies": true,
 			"url": "http://localhost:3333/api/v1/setprinter",
-			"_type": "request"
-		},
-		{
-			"_id": "req_8b6560f7ae39449da1b76140ea97f114",
-			"authentication": {},
-			"body": {},
-			"created": 1553161708092,
-			"description": "",
-			"headers": [],
-			"isPrivate": false,
-			"metaSortKey": -1553161708092,
-			"method": "GET",
-			"modified": 1553161715804,
-			"name": "bad_request",
-			"parameters": [],
-			"parentId": "wrk_7d5a881f47c3413f8b37b36bcc4aa733",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "http://localhost:3333/api/v1/",
 			"_type": "request"
 		},
 		{
@@ -127,29 +104,6 @@
 			"settingSendCookies": true,
 			"settingStoreCookies": true,
 			"url": "http://localhost:3333/api/v1/test",
-			"_type": "request"
-		},
-		{
-			"_id": "req_05e486ddf948429ab8f52b5c4a02ea5f",
-			"authentication": {},
-			"body": {},
-			"created": 1553164899760,
-			"description": "",
-			"headers": [],
-			"isPrivate": false,
-			"metaSortKey": -1553164899760,
-			"method": "GET",
-			"modified": 1553164917595,
-			"name": "printtest",
-			"parameters": [],
-			"parentId": "wrk_7d5a881f47c3413f8b37b36bcc4aa733",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "http://localhost:3333/api/v1/printtest",
 			"_type": "request"
 		}
 	]
