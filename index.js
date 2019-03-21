@@ -3,7 +3,6 @@ var fs = require('fs');
 var url = require('url');
 var ippPrinter = require('ipp');
 var printer = require('printer');
-var pdfkit = require('pdfkit');
 var mime = require('mime');
 
 //reading config
@@ -28,7 +27,7 @@ try{
    }
 }
 catch(e){
-   throw e;
+   //throw e;
 }
 
 
@@ -87,23 +86,6 @@ function getPrintersNameList(){
 	return names;
 }
 
-//get printer set as default on the system
-function getSystemDefaultPrinter(){
-	let printers = printer.getPrinters();
-
-	if (printers.length==0){
-		return null;
-	}
-
-	//get default system printer
-	for (var i = 0;i<printers.length;i++){
-		if (printers[i].isDefault){
-			return printers[i].name;
-		}
-	}
-	return null;
-}
-
 //get printer by his name
 function getPrinterByName(name){
 	let printers = printer.getPrinters();
@@ -135,13 +117,6 @@ function getPrinterById(id){
    return null;
 }
 
-//get the first printer data in the config
-function getFirstPrinter(){
-   if (config.printers==null || config.printers.length==0){
-      return null;
-   }
-   return config.printers[0];
-}
 //--------------------Funcs---------------------
 
 function printFile(file,printer,cb){
@@ -220,6 +195,9 @@ function saveConfig(config){
       if (config.testMessage!=null){
          dataSave+="TEST_MESSAGE="+config.testMessage+"\r\n";
       }
+      if (config.defaultPrinter!=null){
+         dataSave+="DEFAULT_PRINTER="+config.defaultPrinter+"\r\n";
+      }
       if (config.lang!=null){
          dataSave+="LANG="+config.lang+"\r\n";
       }
@@ -250,7 +228,7 @@ function startPrintServer(port){
                   doResponse(response, 200, getPrintersNameList());
                }
                else if (command.startsWith("printtest")){
-                  if (config.testMessage==null){
+                  /*if (config.testMessage==null){
                      config.testMessage="Hello World!";
                   }
                   var pf=getFirstPrinter();
@@ -266,7 +244,7 @@ function startPrintServer(port){
                            doResponse(response,303,"Error code: "+code)
                         }
                      });
-                  }
+                  }*/
                }
                else{
                   doResponse(response,404,null);
@@ -279,24 +257,20 @@ function startPrintServer(port){
                      body += chunk.toString();
                   });
                   request.on('end', () => {
-                     var printers = JSON.parse(body).printers; //read printers to set
-                     var data = [];
-                     if (printers != null){
-                        for (var i = 0;i<printers.length;i++){
-                           let code = setPrinter(printers[i].id,printers[i].name); //set every printer
-                           switch(code){
-                              case 0:
-                                 data.push({"id":printers[i].id,"status":getMessage("ADDED")});
-                                 break;
-                              case -1:
-                                 data.push({"id":printers[i].id,"status":getMessage("CANNOTSAVECONFIG")});
-                                 break;
-                              case -2:
-                                 data.push({"id":printers[i].id,"status":getMessage("NOTFOUND")});
-                                 break;
-                           }
-                        }
-                        doResponse(response,200,data);
+                     var printer_id = parseInt(body);
+                     let code = setPrinter(printer_id);
+                     switch(code){
+                        case 0:
+                           doResponse(response,200,getMessage("CHANGED"));
+                           break;
+                        case -1:
+                           doResponse(response,200,getMessage("CANNOTSAVECONFIG"));
+                           break;
+                        case -2:
+                           doResponse(response,200,getMessage("IDNOTFOUND"));
+                           break;
+                        default:
+                           doResponse(response,404,null);
                      }
                   });
                }
@@ -333,41 +307,22 @@ function doResponse(responseObj,status,content){
 }
 
 //set printer data by id or add new printer to the config
-function setPrinter(id,name){
-   let printers = printer.getPrinters();
-
-   if (printers.length==0){
-      return -2;
-   }
-
+function setPrinter(id){
    if (config.printers==null){
-      config.printers=[];
+      return -2;
    }
    else{
       for (var i = 0;i<config.printers.length;i++){
          if (config.printers[i].id==id){
-            config.printers.splice(i, 1);
-            break;
+            config.defaultPrinter = id;
+            if (saveConfig(config)){
+               return 0;
+            }
+            return -1;
          }
       }
-   }
-
-   var isSet=false;
-   for (var i = 0;i<printers.length;i++){
-      if (printers[i].name==name){
-         isSet=true;
-         config.printers.push({"id":id,"name":printers[i].name});
-         break;
-      }
-   }
-   if (!isSet){
       return -2;
    }
-
-   if (saveConfig(config)){
-      return 0;
-   }
-   return -1;
 }
 
 //read line of text about the config and edit the object by reference
@@ -383,6 +338,10 @@ function procLine(conf, line){
    else if (line.startsWith("LANG") && line.indexOf("=","LANG".length)>=0){
       var tmp = line.substring(line.indexOf("=","LANG".length)+1);
       conf.lang = tmp.trim();
+   }
+   else if (line.startsWith("DEFAULT_PRINTER") && line.indexOf("=","DEFAULT_PRINTER".length)>=0){
+      var tmp = line.substring(line.indexOf("=","DEFAULT_PRINTER".length)+1);
+      conf.defaultPrinter = parseInt(tmp.trim());
    }
    else if (line.startsWith("PRINTER_") && line.indexOf("=","PRINTER_".length)>=0){
       var id = line.substring("PRINTER_".length,line.indexOf("=","PRINTER_".length)).trim();
