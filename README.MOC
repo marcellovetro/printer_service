@@ -21,9 +21,16 @@ How to build
 	build -w or build -l
 
 how to use
+	In linux, the config file (.env) go with the app in the same folder
+		Warning: Linux need lang folder with the app too
+		
+	In Windows the config file go in the installation folder
+	
 	In firefox need to do this:
 		1.- In about:config set print.save_print_settings from true to false
 		2.- In about:config set the print_printer to empty
+		
+	In chrome dont work, have his own default printers
 
 API
 	localhost:port/api/v1/
