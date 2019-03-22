@@ -1,11 +1,53 @@
-# Printer_server
+## Default Printer Changer
 
-With printer service can change the default printer of remote computer doing api requests
+With Default Printer Changer can change the default printer of remote computer doing api requests
 
-## How to build
 
-	In linux:
-	```bash
+================================================================================
+
+## Resources
+* [NodeJS](https://nodejs.org/es/download/)
+* [Python 2.7.16](https://www.python.org/downloads/release/python-2716/)
+* [Printer Module](https://www.npmjs.com/package/printer)
+* [Electron Module](https://www.npmjs.com/package/electron)
+* [Electron-builder Module](https://www.npmjs.com/package/electron-builder)
+* [Node-gyp Module](https://www.npmjs.com/package/node-gyp)
+* [GitHub Repository](https://github.com/TheCruZ/printer_service)
+
+
+================================================================================
+## Installation
+
+	In linux, the config file (.env) go with the app in the same folder
+		Warning: Linux need lang folder with the app too
+		
+	In Windows the config file go in the installation folder
+	In mac the config file go in the package->Contents/.env
+	
+	In firefox need to do this:
+		1.- In about:config set print.save_print_settings from true to false
+		2.- In about:config set the print_printer to empty
+		
+	In chrome dont work, have his own default printers
+
+================================================================================
+## Development Instructions
+
+
+### Development Enviroment Requirements
+
+* NodeJS
+* Python 2.7.16
+* Visual Studio Tools
+* Node module printer
+* Node module electron
+* Node module electron-builder
+* Node module node-gyp
+
+
+### Building the electron file
+
+	Only In Linux:
 		sudo apt-get install g++
 		sudo apt-get install libcups2-dev
 		sudo apt-get install build-essential clang libdbus-1-dev libgtk-3-dev \
@@ -22,39 +64,48 @@ With printer service can change the default printer of remote computer doing api
 	npm install electron-builder -g
 	npm install electron
 	build
-	````
 
-## How to use
-	In linux, the config file (.env) go with the app in the same folder
-		Warning: Linux need lang folder with the app too
-		
-	In Windows the config file go in the installation folder
-	In mac the config file go in the package->Contents/.env
-	
-	In firefox need to do this:
-		1.- In about:config set print.save_print_settings from true to false
-		2.- In about:config set the print_printer to empty
-		
-	In chrome dont work, have his own default printers
-
+================================================================================
 ## API
-	localhost:port/api/v1/
 
-	COMMAND			METHOD		PARAMS EXAMPLE		RESPONSE EXAMPLE
-	getprinters		GET			NONE				{"status": 200,"data": ["OneNote","PDF24 Fax","PDF24 PDF","Microsoft XPS Document Writer","Microsoft Print to PDF","Fax"]}
-	test			GET			NONE				{"status": 200,"data": ["OneNote","PDF24 Fax","PDF24 PDF","Microsoft XPS Document Writer","Microsoft Print to PDF","Fax"]}
-	setprinter		POST		1					{"status": 200,"data": "Default printer changed"}
+### getprinters
+Description:
+Give you a JSEND response with status and data with the name list of printers
 
+Input:
 
-.env config file example:
-`
-#Defalt port 3333, you can set it here
+- NONE
+
+Output:
+
+- {"status": 200,"data": ["Printer 1","Printer 2","Printer 3",...]}
+       
+### setprinter
+Description:
+Set default printer of the system
+
+Input:
+
+- Printer id of the config, Example: 1
+
+Output:
+
+- {"status": 200,"data": "response menssage"}
+
+### test
+Description:
+Help you to know if the server is running
+
+Input:
+
+- NONE
+
+Output:
+
+- {"status": 200,"data": ["Printer 1","Printer 2","Printer 3",...]}
+
+## .env config file example:
 PORT=3333
-
-#Printers, you can add any amount that you want with PRINTER_$NUMBER=$NAME
 PRINTER_1=PDF24 PDF
 PRINTER_2=OneNote
-
-#Lang for the response messages
 LANG=lang_es.cfg
-`
