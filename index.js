@@ -1,11 +1,10 @@
 var http = require('http');
 var fs = require('fs');
 var url = require('url');
-var ippPrinter = require('ipp');
 var printer = require('printer');
-var mime = require('mime');
 const { exec } = require('child_process');
 
+//config app path for mac os
 var baseP=".";
 if (process.platform === "darwin"){
 	baseP= __dirname;
@@ -36,15 +35,10 @@ try{
    }
 }
 catch(e){
-   //throw e;
-   console.log("WARNING: NO LANG LOADED");
+   throw new Error('Can\'t load any language! path:'+baseP+"/lang/"+config.lang+' more info: '+e.message);
 }
 
-
-
-
 startPrintServer(config.port);
-
 
 //--------------GETS------------------------------
 
@@ -132,7 +126,7 @@ function startPrintServer(port){
    http.createServer( function (request, response) {
       //get request query data
       var url_parts = url.parse(request.url,true);
-      if (url_parts.pathname.startsWith("/api/v1/")){
+      if (url_parts.pathname.toLowerCase().startsWith("/api/v1/")){
          var command = url_parts.pathname.substring(8);
          switch(request.method){
             case "GET":
@@ -151,6 +145,10 @@ function startPrintServer(port){
                   });
                   request.on('end', () => {
                      var printer_id = parseInt(body);
+                     if (printer_id==null){
+                        doResponse(response,200,getMessage("IDNOTFOUND"));
+                        return;
+                     }
                      setPrinter(printer_id,function(code){
                         switch(code){
                            case 0:
@@ -201,7 +199,7 @@ function doResponse(responseObj,status,content){
    responseObj.end();
 }
 
-//set printer data by id or add new printer to the config
+//set printer data by id in the config
 function setPrinter(id,cb){
    
    if (config.printers==null){
@@ -276,11 +274,14 @@ function procLine(conf, line){
       conf.lang = tmp.trim();
    }
    else if (line.startsWith("PRINTER_") && line.indexOf("=","PRINTER_".length)>=0){
-      var id = line.substring("PRINTER_".length,line.indexOf("=","PRINTER_".length)).trim();
+      var id = parseInt(line.substring("PRINTER_".length,line.indexOf("=","PRINTER_".length)).trim());
+      if (id==null){
+         return;
+      }
       var name = line.substring(line.indexOf("=","PRINTER_".length)+1).trim();
       if (conf.printers==null){
          conf.printers=[];
       }
-      conf.printers.push({"id":parseInt(id),"name":name});
+      conf.printers.push({"id":id,"name":name});
    }
 }

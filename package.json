@@ -1,8 +1,9 @@
 {
-	"name": "printer_service",
+	"name": "default_printer_changer",
 	"version": "1.0.0",
-	"description": "printer service app",
+	"description": "Change your default printer remote with a simple API Request",
 	"main": "index.js",
+	"author": "Olomedia S.R.L.",
 	"build": {
 		"files": [
 			"index.js",
@@ -14,12 +15,9 @@
 		]
 	},
 	"dependencies": {
-		"ipp": "^2.0.1",
-		"mime": "^2.4.0",
 		"printer": "^0.2.2"
 	},
 	"devDependencies": {
-		"electron": "^4.1.1",
-		"electron-builder": "latest"
+		"electron": "^4.1.1"
 	}
 }

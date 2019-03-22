@@ -1,10 +1,11 @@
-Printer_server
+# Printer_server
 
 With printer service can change the default printer of remote computer doing api requests
 
-How to build
+## How to build
 
 	In linux:
+	```bash
 		sudo apt-get install g++
 		sudo apt-get install libcups2-dev
 		sudo apt-get install build-essential clang libdbus-1-dev libgtk-3-dev \
@@ -12,19 +13,20 @@ How to build
 						   libasound2-dev libcap-dev libcups2-dev libxtst-dev \
 						   libxss1 libnss3-dev gcc-multilib g++-multilib curl \
 						   gperf bison python-dbusmock
+	```
 
+	```cmd
 	npm install -g node-gyp
 	#Printer require python and other visual studio things
 	#In windows 10 install from powershell and not from normal cmd
 	npm install printer --msvs_version=2013
-	npm install ipp
-	npm install mime
 	npm install electron-packager --save-dev
 	npm install electron-builder -g
 	npm install electron
-	build -w or build -l
+	build
+	```
 
-how to use
+## How to use
 	In linux, the config file (.env) go with the app in the same folder
 		Warning: Linux need lang folder with the app too
 		
@@ -37,7 +39,7 @@ how to use
 		
 	In chrome dont work, have his own default printers
 
-API
+## API
 	localhost:port/api/v1/
 
 	COMMAND			METHOD		PARAMS EXAMPLE		RESPONSE EXAMPLE
@@ -47,6 +49,7 @@ API
 
 
 .env config file example:
+`
 #Defalt port 3333, you can set it here
 PORT=3333
 
@@ -56,3 +59,4 @@ PRINTER_2=OneNote
 
 #Lang for the response messages
 LANG=lang_es.cfg
+`
