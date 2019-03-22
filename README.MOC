@@ -44,3 +44,15 @@ API
 	getprinters		GET			NONE				{"status": 200,"data": ["OneNote","PDF24 Fax","PDF24 PDF","Microsoft XPS Document Writer","Microsoft Print to PDF","Fax"]}
 	test			GET			NONE				{"status": 200,"data": ["OneNote","PDF24 Fax","PDF24 PDF","Microsoft XPS Document Writer","Microsoft Print to PDF","Fax"]}
 	setprinter		POST		1					{"status": 200,"data": "Default printer changed"}
+
+
+.env config file example:
+#Defalt port 3333, you can set it here
+PORT=3333
+
+#Printers, you can add any amount that you want with PRINTER_$NUMBER=$NAME
+PRINTER_1=PDF24 PDF
+PRINTER_2=OneNote
+
+#Lang for the response messages
+LANG=lang_es.cfg
