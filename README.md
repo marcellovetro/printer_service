@@ -47,6 +47,11 @@ With Default Printer Changer can change the default printer of remote computer d
 
 ### Building the electron file
 
+	Download this repostory
+	cd into the repostory
+	do this:
+	Warning: Is recommended use the console with admin right
+
 	Only In Linux:
 		sudo apt-get install g++
 		sudo apt-get install libcups2-dev
@@ -58,7 +63,7 @@ With Default Printer Changer can change the default printer of remote computer d
 
 	npm install -g node-gyp
 	#Printer require python and other visual studio things
-	#In windows 10 install from powershell and not from normal cmd
+	#In windows 10 is recommended install from powershell and not from normal cmd
 	npm install printer --msvs_version=2013
 	npm install electron-packager --save-dev
 	npm install electron-builder -g
