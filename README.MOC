@@ -1,3 +1,7 @@
+Printer_server
+
+With printer service can change the default printer of remote computer doing api requests
+
 How to build
 
 	In linux:
