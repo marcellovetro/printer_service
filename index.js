@@ -6,6 +6,12 @@ var printer = require('printer');
 var mime = require('mime');
 const { exec } = require('child_process');
 
+var baseP=".";
+if (process.platform === "darwin"){
+	baseP= __dirname;
+	baseP= baseP.substring(0,baseP.lastIndexOf("/"));
+	baseP= baseP.substring(0,baseP.lastIndexOf("/"));
+}
 
 //reading config
 var config = getConfig();
@@ -18,8 +24,9 @@ if (config.lang==null){
    config.lang = "lang_en.cfg";//default lang
 }
 var textData=[];
+
 try{
-   textData=fs.readFileSync("./lang/"+config.lang,"utf8");
+   textData=fs.readFileSync(baseP+"/lang/"+config.lang,"utf8");
    if (textData.includes("\n")){
       textData=textData.replace("\r\n","\n");
       textData=textData.split("\n");
@@ -45,7 +52,7 @@ startPrintServer(config.port);
 function getConfig(){
    var data = "";
    try{
-      data = fs.readFileSync(".env","utf8")
+      data = fs.readFileSync(baseP+"/.env","utf8")
    }
    catch(err){
       return {};
@@ -183,6 +190,7 @@ function startPrintServer(port){
 
 //finish one response with the given data
 function doResponse(responseObj,status,content){
+
    responseObj.writeHead(status, {'Content-Type': 'text/html'});
    if (status!=404){
       var res = {};
