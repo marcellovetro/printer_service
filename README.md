@@ -13,9 +13,7 @@ With printer service can change the default printer of remote computer doing api
 						   libasound2-dev libcap-dev libcups2-dev libxtst-dev \
 						   libxss1 libnss3-dev gcc-multilib g++-multilib curl \
 						   gperf bison python-dbusmock
-	```
 
-	```cmd
 	npm install -g node-gyp
 	#Printer require python and other visual studio things
 	#In windows 10 install from powershell and not from normal cmd
@@ -24,7 +22,7 @@ With printer service can change the default printer of remote computer doing api
 	npm install electron-builder -g
 	npm install electron
 	build
-	```
+	````
 
 ## How to use
 	In linux, the config file (.env) go with the app in the same folder
