@@ -208,7 +208,7 @@ function setPrinter(id,cb){
       }
       else{
          if (process.platform === "win32"){
-            exec('RUNDLL32 PRINTUI.DLL,PrintUIEntry /y /n "'+prin.name+'"', (err, stdout, stderr) => {
+            exec('RUNDLL32 PRINTUI.DLL,PrintUIEntry /y /q /n "'+prin.name+'"', (err, stdout, stderr) => {
                if (err) {
                   cb(-1);
                   return;
