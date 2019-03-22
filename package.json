@@ -1,8 +1,8 @@
 {
-  "name": "printer_service",
-  "version": "1.0.0",
-  "description": "printer service app",
-  "main": "index.js",
+	"name": "printer_service",
+	"version": "1.0.0",
+	"description": "printer service app",
+	"main": "index.js",
 	"build": {
 		"files": [
 			"index.js",
@@ -13,9 +13,13 @@
 			".env.example"
 		]
 	},
-  "dependencies": {
-    "ipp": "latest",
-	"printer": "latest",
-	"mime": "latest"
-  }
+	"dependencies": {
+		"ipp": "^2.0.1",
+		"mime": "^2.4.0",
+		"printer": "^0.2.2"
+	},
+	"devDependencies": {
+		"electron": "^4.1.1",
+		"electron-builder": "latest"
+	}
 }

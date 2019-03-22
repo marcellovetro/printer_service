@@ -1,4 +1,4 @@
-How to install
+How to build
 	npm install -g node-gyp
 	#Printer require python and other visual studio things
 	#In windows 10 install from powershell and not from normal cmd
@@ -7,12 +7,18 @@ How to install
 	npm install mime
 	npm install electron-packager --save-dev
 	npm install electron-builder
+	npm install electron
 	build -w
 
-API
-localhost:port/api/v1/
+how to use
+	In firefox need to do this:
+		1.- In about:config set print.save_print_settings from true to false
+		2.- In about:config set the print_printer to empty
 
-COMMAND			METHOD		PARAMS EXAMPLE		RESPONSE EXAMPLE
-getprinters		GET			NONE				{"status": 200,"data": ["OneNote","PDF24 Fax","PDF24 PDF","Microsoft XPS Document Writer","Microsoft Print to PDF","Fax"]}
-test			GET			NONE				{"status": 200,"data": ["OneNote","PDF24 Fax","PDF24 PDF","Microsoft XPS Document Writer","Microsoft Print to PDF","Fax"]}
-setprinter		POST		1					{"status": 200,"data": "Default printer changed"}
+API
+	localhost:port/api/v1/
+
+	COMMAND			METHOD		PARAMS EXAMPLE		RESPONSE EXAMPLE
+	getprinters		GET			NONE				{"status": 200,"data": ["OneNote","PDF24 Fax","PDF24 PDF","Microsoft XPS Document Writer","Microsoft Print to PDF","Fax"]}
+	test			GET			NONE				{"status": 200,"data": ["OneNote","PDF24 Fax","PDF24 PDF","Microsoft XPS Document Writer","Microsoft Print to PDF","Fax"]}
+	setprinter		POST		1					{"status": 200,"data": "Default printer changed"}
