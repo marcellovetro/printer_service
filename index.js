@@ -225,7 +225,6 @@ function setPrinter(id,cb){
              });
          }
          else if (process.platform === "darwin"){
-            //TODO: mac default set
             exec('defaults write ~/Library/Preferences/org.cups.PrintingPrefs.plist UseLastPrinter -bool FALSE', (err, stdout, stderr) => {
                if (err) {
                   cb(-1);
@@ -243,7 +242,7 @@ function setPrinter(id,cb){
             });
          }
          else{
-            exec('export PRINTER='+prin.name, (err, stdout, stderr) => {
+            exec('lpoptions -d '+prin.name, (err, stdout, stderr) => {
                if (err) {
                   cb(-1);
                   return;
