@@ -208,19 +208,39 @@ function setPrinter(id,cb){
       }
       else{
          if (process.platform === "win32"){
-            exec('RUNDLL32 PRINTUI.DLL,PrintUIEntry /y /q /n "'+prin.name+'"', (err, stdout, stderr) => {
+            exec("reg add \"HKEY_CURRENT_USER\\Software\\Microsoft\\Windows NT\\CurrentVersion\\Windows\" /v \"LegacyDefaultPrinterMode\" /t \"REG_DWORD\" /d 1 /f",  (err, stdout, stderr) => {
                if (err) {
                   cb(-1);
-                  return;
                }
                else{
-                  cb(0);
-                  return;
+                  exec('RUNDLL32 PRINTUI.DLL,PrintUIEntry /y /q /n "'+prin.name+'"', (err, stdout, stderr) => {
+                     if (err) {
+                        cb(-1);
+                     }
+                     else{
+                        cb(0);
+                     }
+                  });
                }
              });
          }
          else if (process.platform === "darwin"){
             //TODO: mac default set
+            exec('defaults write ~/Library/Preferences/org.cups.PrintingPrefs.plist UseLastPrinter -bool FALSE', (err, stdout, stderr) => {
+               if (err) {
+                  cb(-1);
+               }
+               else{
+                  exec('lpoptions -d '+prin.name, (err, stdout, stderr) => {
+                     if (err) {
+                        cb(-1);
+                     }
+                     else{
+                        cb(0);
+                     }
+                  });
+               }
+            });
          }
          else{
             exec('export PRINTER='+prin.name, (err, stdout, stderr) => {
