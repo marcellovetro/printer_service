@@ -29,6 +29,7 @@ how to use
 		Warning: Linux need lang folder with the app too
 		
 	In Windows the config file go in the installation folder
+	In mac the config file go in the package->Contents/.env
 	
 	In firefox need to do this:
 		1.- In about:config set print.save_print_settings from true to false
